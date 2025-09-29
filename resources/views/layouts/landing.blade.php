@@ -39,7 +39,7 @@
     <!-- Footer -->
     <footer class="bg-white py-4">
         <div class="container mx-auto px-6 text-center text-gray-600">
-            &copy; {{ date('Y') }} Warung Nan Kanduang. All Rights Reserved.
+            &copy; {{ date('Y') }} Warung Nan Kanduang.
         </div>
     </footer>
 
