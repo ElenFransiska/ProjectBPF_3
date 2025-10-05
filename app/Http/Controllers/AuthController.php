@@ -3,31 +3,41 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    // Fungsi ini untuk menampilkan halaman login
+    /**
+     * Menampilkan halaman form login.
+     * Kita akan arahkan ke tampilan login yang elegan.
+     */
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    // Fungsi ini untuk memproses login (TANPA DATABASE)
     public function login(Request $request)
     {
-        // Simulasi: Anggap saja login selalu berhasil
-        // Nanti di sini akan ada validasi dan pengecekan ke database
-        
-        // Redirect ke halaman utama setelah "berhasil" login
-        return redirect('/')->with('status', 'Anda berhasil login!');
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+        if (Auth::attempt($credentials, $request->filled('remember'))) {
+            // Jika berhasil, buat session baru
+            $request->session()->regenerate();
+            return redirect()->intended('dashboard');
+        }
+        return back()->withErrors([
+            'email' => 'Email atau password yang Anda masukkan salah.',
+        ])->onlyInput('email');
     }
-
-    // Fungsi untuk logout (TANPA DATABASE)
-    public function logout()
+    public function logout(Request $request)
     {
-        // Simulasi: Anggap saja logout selalu berhasil
-        // Nanti di sini akan ada proses menghapus session
-        
-        return redirect('/login')->with('status', 'Anda berhasil logout!');
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        // Arahkan kembali ke halaman utama
+        return redirect('/');
     }
 }
+

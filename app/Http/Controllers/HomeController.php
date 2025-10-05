@@ -1,71 +1,71 @@
 <?php
-namespace App\Http\Controllers;
-use Illuminate\Http\Request;
-class HomeController extends Controller{
-    public function home(){
-        $pakets = [
-            [
-                'nama' => 'Paket Nasi Kotak Special',
-                'deskripsi' => 'Nasi, Rendang Daging, Ayam Gulai, Sayur Nangka, Sambal Ijo.',
-                'harga' => 25000,
-                'gambar' => 'https://images.unsplash.com/photo-1574894709920-31b29d1dc335?q=80&w=1887&auto=format&fit=crop'
-            ],
-            [
-                'nama' => 'Prasmanan Meriah',
-                'deskripsi' => 'Berbagai pilihan lauk pauk khas Padang disajikan secara prasmanan.',
-                'harga' => 55000,
-                'gambar' => 'https://images.unsplash.com/photo-1627063304562-5a2542a93902?q=80&w=1935&auto=format&fit=crop'
-            ],
-            [
-                'nama' => 'Paket Acara Keluarga',
-                'deskripsi' => 'Menu lengkap untuk acara arisan, ulang tahun, dan kumpul keluarga.',
-                'harga' => 0, // Harga khusus, bisa diganti dengan teks
-                'gambar' => 'https://images.unsplash.com/photo-1604255194595-54e4e3c6a489?q=80&w=1887&auto=format&fit=crop'
-            ]
-        ];
 
-        return view('landing.home', compact('pakets'));
-    }
-    public function paket()
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password;
+
+class HomeController extends Controller
+{
+   
+    public function home()
     {
         $pakets = [
             [
                 'nama' => 'Paket Nasi Kotak Hemat',
-                'deskripsi' => 'Nasi, Ayam Bakar, Sayur Nangka, Sambal Ijo.',
-                'harga' => 20000,
-                'gambar' => 'https://images.unsplash.com/photo-1604255194595-54e4e3c6a489?q=80&w=1887&auto=format&fit=crop'
-            ],
-            [
-                'nama' => 'Paket Nasi Kotak Special',
-                'deskripsi' => 'Nasi, Rendang Daging, Ayam Gulai, Sayur Nangka, Sambal Ijo.',
+                'deskripsi' => 'Nasi, Rendang, Daun Singkong, Sambal Hijau.',
                 'harga' => 25000,
-                'gambar' => 'https://images.unsplash.com/photo-1574894709920-31b29d1dc335?q=80&w=1887&auto=format&fit=crop'
+                'gambar' => 'https://images.unsplash.com/photo-1568600891621-c2f30b2d3923?q=80&w=1915&auto=format&fit=crop'
             ],
             [
-                'nama' => 'Paket Nasi Rames',
-                'deskripsi' => 'Nasi putih dengan pilihan 3 jenis lauk pendamping.',
-                'harga' => 18000,
-                'gambar' => 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=2070&auto=format&fit=crop'
-            ],
-            [
-                'nama' => 'Prasmanan Meriah',
-                'deskripsi' => 'Berbagai pilihan lauk pauk khas Padang disajikan secara prasmanan. Hubungi kami untuk detail menu.',
+                'nama' => 'Paket Prasmanan Silver',
+                'deskripsi' => 'Pilihan 5 menu utama, 2 menu pendamping, dan buah.',
                 'harga' => 55000,
-                'gambar' => 'https://images.unsplash.com/photo-1627063304562-5a2542a93902?q=80&w=1935&auto=format&fit=crop'
+                'gambar' => 'https://images.unsplash.com/photo-1625944239901-29792f0391b1?q=80&w=2070&auto=format&fit=crop'
             ],
             [
-                'nama' => 'Prasmanan Akbar',
-                'deskripsi' => 'Paket prasmanan paling lengkap dengan pilihan menu premium untuk acara besar dan istimewa.',
-                'harga' => 85000,
-                'gambar' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop'
-            ],
-             [
-                'nama' => 'Paket Kopi Pagi',
-                'deskripsi' => 'Sajian kopi, teh, dan aneka kue jajanan pasar untuk rapat atau acara pagi hari.',
-                'harga' => 15000,
-                'gambar' => 'https://images.unsplash.com/photo-1559925221-1249abd34159?q=80&w=1887&auto=format&fit=crop'
+                'nama' => 'Paket Pernikahan Gold',
+                'deskripsi' => 'Layanan lengkap dengan 10+ menu pilihan dan stall.',
+                'harga' => 120000,
+                'gambar' => 'https://images.unsplash.com/photo-1551024601-bec78aea704b?q=80&w=1964&auto=format&fit=crop'
             ],
         ];
-        return view('landing.paket', compact('pakets'));
+
+        return view('landing.home', compact('pakets'));
+    }
+
+    
+    public function paket()
+    {
+        return view('landing.paket');
+    }
+
+    public function showRegistrationForm()
+    {
+        return view('landing.register');
+    }
+
+    public function register(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => [
+                'required',
+                'confirmed',
+                Password::min(8)
+                    ->mixedCase()
+                    ->numbers()
+            ],
+        ]);
+        if ($validator->fails()) {
+            return redirect()->route('register.show')
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+        return redirect()->route('home')->with('success', 'Akun Anda berhasil dibuat!');
     }
 }
+

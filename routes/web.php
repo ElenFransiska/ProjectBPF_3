@@ -5,15 +5,37 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PaketController;
 use App\Http\Controllers\PemesananController;
-use App\Http\Controllers\HomeController; // Menggunakan HomeController yang baru
+use App\Http\Controllers\HomeController;
 
-Route::get('/', [HomeController::class, 'home'])->name('home'); // Sudah diubah ke HomeController
-Route::get('/paket', [HomeController::class, 'paket'])->name('paket.public'); // Sudah diubah ke HomeController
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| File ini berfungsi sebagai peta untuk semua URL di aplikasi Anda.
+|
+*/
+
+//==========================================================================
+// RUTE HALAMAN PUBLIK (UNTUK PELANGGAN)
+//==========================================================================
+
+// Halaman Utama (Homepage)
+Route::get('/', [HomeController::class, 'home'])->name('home');
+
+// Halaman untuk melihat semua paket katering
+Route::get('/paket', [HomeController::class, 'paket'])->name('paket.public');
+
+// Halaman untuk registrasi akun baru
+Route::get('/register', [HomeController::class, 'showRegistrationForm'])->name('register.show');
+Route::post('/register', [HomeController::class, 'register'])->name('register.post');
+
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/dashboard', function () {
     return view('welcome');
